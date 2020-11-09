@@ -9,9 +9,16 @@ function read_coap(url_server, port_server) {
     req.end();
     req.on('response', function(res) {
 
-        let value = res.payload.toString();
-        console.log(value);
+        res.on('readable', () => {
+            // There is some data to read now.
+            let data;    
+            while (data = res.read()) {
+               
+                console.log("Data = "+ data.toString());
+            }
+        });
+
 
     })
 };
-setInterval(() => {read_coap('coap://localhost/prova',5683);}, 3000);
+read_coap('coap://localhost/prova',5683);
