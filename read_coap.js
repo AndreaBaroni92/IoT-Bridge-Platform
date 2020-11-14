@@ -1,6 +1,6 @@
 const coap  = require('coap');
 
-function read_coap(url_server, port_server) {
+exports.read_coap =  function (url_server, port_server,cb) {
 
     let req;
     var my_url = new URL(url_server);
@@ -8,17 +8,13 @@ function read_coap(url_server, port_server) {
     req   = coap.request(my_url);
     req.end();
     req.on('response', function(res) {
-
-        res.on('readable', () => {
-            // There is some data to read now.
-            let data;    
-            while (data = res.read()) {
-               
-                console.log("Data = "+ data.toString());
-            }
-        });
-
-
+        let value=res.payload.toString();
+        cb(value);
     })
 };
-read_coap('coap://localhost/prova',5683);
+/*
+setInterval(() => {
+    read_coap('coap://localhost/prova',5683,function(value) {
+        console.log(value);
+    });
+}, 3000);*/
