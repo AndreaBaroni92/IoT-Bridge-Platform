@@ -1,8 +1,7 @@
-var coap = require('coap')
-var read_h = require('./read_http.js')
+const coap = require('coap')
+const read_h = require('./read_http.js')
 
-
-function http_to_coap(http_address, port_http, coap_port) {
+exports.http_to_coap = function (http_address, port_http, coap_port) {
 
   var server = coap.createServer();
   let path = new URL(http_address).pathname;
@@ -35,4 +34,4 @@ function http_to_coap(http_address, port_http, coap_port) {
 
 }
 
-http_to_coap ("http://localhost/andrea",3001,5683)
+//http_to_coap ("http://localhost/andrea",3001,5683)
