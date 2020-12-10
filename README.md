@@ -68,7 +68,7 @@ Per informazioni sulle opzioni è possibile digitare:
 ```
 node .\main.js translate --help
 ``` 
-## Settaggio del database Influx 2.0  
+## Settaggio nel database Influx 2.0  
 Per la creazione del bucket, e l'impostazione dei check, degli alert e degli avvisi con i relativi endpoint è possibile utilizzare l'interfaccia grafica fornita con influx 2.0. Il file `env.js` è necessario per specificare **l'url** ,**il token** e **l'organizzazione** del database.
 Alternativamente è possibile utilizzare alcuni file presenti all'interno della cartella **dati**, in particolare:  
 - `createBucket.js` crea un bucket su influx, è possibile impostare il nome e la politica di retention,  
