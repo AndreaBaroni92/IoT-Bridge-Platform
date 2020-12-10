@@ -1,5 +1,5 @@
 /** InfluxDB v2 URL */
-const url =  ''
+const url =  'http://localhost:8086'
 /** InfluxDB authorization token */
 const token = ''
 /** Organization within InfluxDB  */

@@ -79,17 +79,16 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
     }
 
     this.saveMqtt = function () {
-
+        let data, t, m, ris;
         this.read_mqtt((stream_r) => {
             stream_r.on('readable', async () => {
                 // There is some data to read now.
-                let data;
                 while (data = stream_r.read()) {
                     t = data.topic.toString();
                     m = data.message.toString();
                     try {
                         if (util.test(parseFloat(m), this.min, this.max)) { //filtra i risultati prima del salvataggio
-                            let ris = await this.saveInflux(this.mesurement, this.field, m)
+                            ris = await this.saveInflux(this.mesurement, this.field, m)
                             console.log(ris);
                         }
                     } catch (error) {
@@ -105,13 +104,14 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
 
     this.saveHttp = async function () {
         const eventEmitter = new EventEmitter()
+        let ris, ris_influx;
         eventEmitter.on('start', async () => {
 
             try {
 
-                let ris = await this.read_http()
+                ris = await this.read_http()
                 if (util.test(parseFloat(ris), this.min, this.max)) { //filtra i risultati prima del salvataggio
-                    let ris_influx = await this.saveInflux(this.mesurement, this.field, ris)
+                    ris_influx = await this.saveInflux(this.mesurement, this.field, ris)
                     console.log(ris_influx)
                 }
                 await util.sleep(2000) // sleeps two seconds then emits a new start event
@@ -130,16 +130,17 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
     this.saveCoap = async function () {
 
         const eventEmitter = new EventEmitter()
+        let ris, ris_influx;
 
         eventEmitter.on('start', async () => {
 
             try {
 
-                let ris = await this.read_coap()
+                ris = await this.read_coap()
                 if (ris) {
                     if (util.test(parseFloat(ris), this.min, this.max)) { //filtra i risultati se passano il test
 
-                        let ris_influx = await this.saveInflux(this.mesurement, this.field, ris)
+                        ris_influx = await this.saveInflux(this.mesurement, this.field, ris)
                         console.log(ris_influx)
                     }
                 }

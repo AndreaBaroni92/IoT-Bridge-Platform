@@ -1,7 +1,8 @@
 const express = require('express')
 const { Telegraf } = require('telegraf')
-
-let prova = new TelegramBot('', '', "/prova", 3006) //specificare token BOT e token channel
+const TOKEN = '' //token del bot telegram che si occupa di inviare la notifica sul canale 
+const IDCHANNEL = '' //id del canale telegram
+let prova = new TelegramBot(TOKEN, IDCHANNEL, "/prova", 3006)
 prova.alert()
 
 function TelegramBot(token_bot, token_channel, path, port) {
@@ -19,7 +20,7 @@ function TelegramBot(token_bot, token_channel, path, port) {
         app.post(this.path, async (req, res) => {
             try {
                 await bot.telegram.sendMessage(this.token_channel, req.body._message)
-               // console.log(req.body);
+                console.log(req.body);
                 res.send("ok")
             } catch (error) {
                 console.log("Errore nell'invio del bot telegram");

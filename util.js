@@ -2,7 +2,12 @@ exports.sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 exports.test = function (value, min, max) {
 
-    if ((typeof min === 'undefined') && (typeof max === 'undefined')) {
+    if (Number.isNaN(value)) {
+
+        return false
+    }
+
+    else if ((typeof min === 'undefined') && (typeof max === 'undefined')) {
         return true
     }
 

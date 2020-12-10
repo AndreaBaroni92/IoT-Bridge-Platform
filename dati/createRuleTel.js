@@ -115,4 +115,4 @@ async function recreateRule(regolaDaInserire, endpointName) {
 
 }
 
-recreateRule("provaRegola", "endpointTel")
+recreateRule("RegolaDht11", "endpointTel")

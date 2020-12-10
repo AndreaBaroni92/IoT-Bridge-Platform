@@ -23,13 +23,14 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
 
         let server = coap.createServer();
         let path = new URL(this.address).pathname;
+        let ris;
 
         server.on('request', async (req, res) => {
 
             if ((req.url) == path) {
 
                 try {
-                    let ris = await this.read_http(); // aspetta che la richista al server http dia risposta
+                    ris = await this.read_http(); // aspetta che la richista al server http dia risposta
                     if (util.test(parseFloat(ris), this.min, this.max)) {
                         res.end(ris, "UTF-8");
                     }
@@ -52,6 +53,7 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
 
     this.coap_to_http = function () {
         let app = express()
+        let ris
 
         let path = new URL(this.address).pathname;
 
@@ -65,7 +67,7 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
                 req.on('close', function () {
                     console.log("Connessione chiusa ");
                 })
-                let ris = await this.read_coap();
+                ris = await this.read_coap();
 
                 if (util.test(parseFloat(ris), this.min, this.max)) {
                     res.set('Content-Type', 'text/plain');
@@ -84,7 +86,7 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
         })
 
         app.listen(this.dstPort, () => {
-            console.log(`Example app listening at http://localhost:${this.dstPort}`)
+            console.log(`Example app listening at http://localhost:${this.dstPort}${path}`)
         })
 
     }
@@ -93,7 +95,7 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
     this.mqtt_to_coap = function () {
 
         let server = coap.createServer();
-        let t, m;
+        let t, m, data;
 
         server.on('request', (req, res) => {
             console.log(req.url + " " + t);
@@ -119,7 +121,6 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
         this.read_mqtt((stream_r) => {
             stream_r.on('readable', () => {
                 // There is some data to read now.
-                let data;
                 while (data = stream_r.read()) {
                     t = data.topic.toString();
                     m = data.message.toString();
@@ -137,12 +138,13 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
         let client = mqtt.connect({ host: this.dstHost, port: this.dstPort })
 
         let eventEmitter = new EventEmitter()
+        let value
 
         client.on('connect', async () => {
 
             eventEmitter.on('start', async () => {
                 try {
-                    let value = await this.read_coap() // aspetta che la richiesta al server coap restituisca un messaggio
+                    value = await this.read_coap() // aspetta che la richiesta al server coap restituisca un messaggio
                     if (util.test(parseFloat(value), this.min, this.max)) {
 
                         client.publish((my_url.pathname).slice(1), value)
@@ -204,7 +206,7 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
 
         // let server = coap.createServer();
         let server = express()
-        let t, m;
+        let t, m, data;
 
         server.get('/' + this.topic, (req, res) => {
             console.log(this.topic);
@@ -224,13 +226,12 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
 
         })
         server.listen(this.dstPort, () => {
-            console.log(`Example app listening at http://localhost:${this.dstPort}`)
+            console.log(`Example app listening at http://localhost:${this.dstPort}/${this.topic}`)
         })
 
         this.read_mqtt((stream_r) => {
             stream_r.on('readable', () => {
                 // There is some data to read now.
-                let data;
                 while (data = stream_r.read()) {
                     t = data.topic.toString();
                     m = data.message.toString();

@@ -1,9 +1,9 @@
 {
     "token": "",
     "org": "",
-    "bucket" : "",
-    "url" : "",
-    "mesurement" :"mesurement",
-    "field": "field_cambiato",
+    "bucket" : "sensor",
+    "url" : "http://localhost:8086",
+    "mesurement" :"dht11",
+    "field": "temperature",
     "defaultTag":"{\"chiave\": \"valore\"}"
 }

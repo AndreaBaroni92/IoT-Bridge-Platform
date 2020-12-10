@@ -51,11 +51,11 @@ exports.ReadProtocol = function (address, port, topic, min, max) {
             try {
 
                 let ris = await this.read_coap()
-                if (ris) {
-                    if (util.test(parseFloat(ris), this.min, this.max)) { //filtra i risultati se passano il test
-                        console.log(ris)
-                    }
+
+                if (util.test(parseFloat(ris), this.min, this.max)) { //filtra i risultati se passano il test
+                    console.log(ris)
                 }
+
                 await util.sleep(2000) // sleeps two seconds then emits a new start event
                 eventEmitter.emit('start')
 

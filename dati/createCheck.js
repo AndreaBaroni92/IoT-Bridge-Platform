@@ -60,9 +60,8 @@ async function createNewCheck(nuovoNomeCheck, orgID2) {
         query: {
             text: 'from(bucket: "sensor")\n' +
                 '  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n' +
-                '  |> filter(fn: (r) => r["_measurement"] == "mesurement")\n' +
-                '  |> filter(fn: (r) => r["_field"] == "field_cambiato")\n' +
-                '  |> filter(fn: (r) => r["chiave"] == "valore")\n' +
+                '  |> filter(fn: (r) => r["_measurement"] == "dht11")\n' +
+                '  |> filter(fn: (r) => r["_field"] == "temperature")\n' +                
                 '  |> aggregateWindow(every: 10s, fn: mean, createEmpty: false)\n' +
                 '  |> yield(name: "mean")',
             editMode: 'builder',
@@ -72,17 +71,12 @@ async function createNewCheck(nuovoNomeCheck, orgID2) {
                 tags: [
                     {
                       key: '_measurement',
-                      values: [ 'mesurement' ],
+                      values: [ 'dht11' ],
                       aggregateFunctionType: 'filter'
                     },
                     {
                       key: '_field',
-                      values: [ 'field_cambiato' ],
-                      aggregateFunctionType: 'filter'
-                    },
-                    {
-                      key: 'chiave',
-                      values: [ 'valore' ],
+                      values: [ 'temperature' ],
                       aggregateFunctionType: 'filter'
                     },
                     { key: '', values: [], aggregateFunctionType: 'filter' }
@@ -101,7 +95,7 @@ async function createNewCheck(nuovoNomeCheck, orgID2) {
             {
                 allValues: false,
                 level: 'CRIT',
-                value: 30,
+                value: 19,
                 type: 'lesser'
             }
         ],
@@ -121,4 +115,4 @@ async function createNewCheck(nuovoNomeCheck, orgID2) {
 
 }
 
-recreatechek('chekProva2')
+recreatechek('chekTemp')

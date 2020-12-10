@@ -38,7 +38,7 @@ async function recreateBucket(name) {
   }
 
   console.log(`*** Create Bucket "${name}" ***`)
-  // creates a bucket, entity properties are specified in the "body" property
+  // crea un bucket con annessa politica di retention
   const bucket = await bucketsAPI.postBuckets({body: {orgID, name, retentionRules: [{everySeconds:60*60*9,type:"expire"}]}})
   console.log(
     JSON.stringify(
@@ -49,7 +49,7 @@ async function recreateBucket(name) {
   )
 }
 
-recreateBucket('humidity')
+recreateBucket('sensor')
   .then(() => console.log('\nFinished SUCCESS'))
   .catch(error => {
     console.error(error)

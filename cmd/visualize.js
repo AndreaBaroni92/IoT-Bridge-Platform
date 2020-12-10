@@ -71,9 +71,9 @@ exports.handler = function (argv) {
             break;
         case 'mqtt':
             display.read_mqtt((stream_r) => {
+                let data;
+                let t, m;
                 stream_r.on('readable', () => {
-                    let data;
-                    let t, m;
                     while (data = stream_r.read()) {
                         t = data.topic.toString();
                         m = data.message.toString();

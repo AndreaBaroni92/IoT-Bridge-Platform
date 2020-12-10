@@ -4,7 +4,6 @@ const { NotificationEndpointsAPI, OrgsAPI } = require('@influxdata/influxdb-clie
 const { url, org, token } = require('./env')
 const influxDB = new InfluxDB({ url, token })
 
-const URLENDPOINT = 'http://192.168.1.6:3005/prova'
 
 function controlla(checPresente, chekDaInserire) {
 
@@ -23,9 +22,9 @@ async function createEndpoint(api, endP, orgID2) {
 
         let ris = await api.createNotificationEndpoint({
             body: {
-                channel: '',//specificare id channel
+                channel: '',// inserire id del canale telegram sul quale spedire la notifica
                 name: endP,
-                token: '',// specificare token bot
+                token: '',// inserire token bot telegram 
                 orgId: orgID2,
                 status: 'active',
                 type: 'telegram'
