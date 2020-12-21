@@ -10,14 +10,6 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
     this.dstHost = dstHost
     this.dstPort = dstPort
     read.ReadProtocol.call(this, srcHost, srcPort, srcTopic, min, max)
-    Bridge.prototype = Object.create(read.ReadProtocol.prototype)
-
-    Object.defineProperty(Bridge.prototype, 'constructor', {
-        value: Bridge,
-        enumerable: false, // so that it does not appear in 'for in' loop
-        writable: true
-    })
-
 
     this.http_to_coap = function () {
 
@@ -94,25 +86,20 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
 
     this.mqtt_to_coap = function () {
 
-        let server = coap.createServer();
-        let t, m, data;
-
+        let server = coap.createServer()
+        let t, m, data, ind
+        let objsMqtt = []
         server.on('request', (req, res) => {
-            console.log(req.url + " " + t);
-            if ((req.url).slice(1) == t) {
 
-                if (util.test(parseFloat(m), this.min, this.max)) {
-                    res.end(m, "UTF-8")
-                }
-                else {
-                    res.end()
-                }
 
+            if (util.findTopic(objsMqtt, req.url) === -1) {
+                console.log("Non trovato");
+                res.end()
             }
             else {
-                res.end()
-
+                res.end(objsMqtt[util.findTopic(objsMqtt, req.url)].value, "UTF-8")
             }
+
         })
         server.listen(this.dstPort, () => {
             console.log('server coap started')
@@ -124,6 +111,13 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
                 while (data = stream_r.read()) {
                     t = data.topic.toString();
                     m = data.message.toString();
+                    if (util.test(parseFloat(m), this.min, this.max)) {//passa il test
+                        ind = util.findTopic(objsMqtt, '/' + t)
+                        ind === -1 ? objsMqtt.push({ url: '/' + t, value: m }) : objsMqtt[ind].value = m
+                        //console.log("Rivevuto " + m);
+                        console.log(objsMqtt);
+                        console.log("-------------------------");
+                    }
                 }
             })
         })
@@ -204,29 +198,30 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
 
     this.mqtt_to_http = function () {
 
-        // let server = coap.createServer();
         let server = express()
-        let t, m, data;
+        let t, m, data, ind;
+        let objsMqtt = []
 
-        server.get('/' + this.topic, (req, res) => {
-            console.log(this.topic);
+        server.get('*', (req, res) => {
+            // console.log(this.topic);
             res.on('timeout', () => {
                 console.log("Intercettato timeout");
             })
             req.on('close', function () {
                 console.log("Connessione chiusa ");
             })
-            if (util.test(parseFloat(m), this.min, this.max)) {
-                console.log("Valore = " + m);
-                res.send(m)
+
+            if (util.findTopic(objsMqtt, req.path) === -1) {
+                res.sendStatus(404)
             }
             else {
-                res.end()
+                res.send(objsMqtt[util.findTopic(objsMqtt, req.path)].value)
             }
 
         })
         server.listen(this.dstPort, () => {
-            console.log(`Example app listening at http://localhost:${this.dstPort}/${this.topic}`)
+            console.log(`Server started at port : ${this.dstPort} , 
+            supplied topic : ${this.topic}`)
         })
 
         this.read_mqtt((stream_r) => {
@@ -235,7 +230,14 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
                 while (data = stream_r.read()) {
                     t = data.topic.toString();
                     m = data.message.toString();
-                    console.log("Rivevuto " + m);
+
+                    if (util.test(parseFloat(m), this.min, this.max)) {//passa il test
+                        ind = util.findTopic(objsMqtt, '/' + t)
+                        ind === -1 ? objsMqtt.push({ url: '/' + t, value: m }) : objsMqtt[ind].value = m
+                        console.log(objsMqtt);
+                        console.log("-------------------------");
+                    }
+
                 }
             })
         })
@@ -243,3 +245,11 @@ function Bridge(srcHost, srcPort, srcTopic, dstHost, dstPort, min, max) {
     }
 
 }
+
+Bridge.prototype = Object.create(read.ReadProtocol.prototype)
+
+Object.defineProperty(Bridge.prototype, 'constructor', {
+    value: Bridge,
+    enumerable: false, // so that it does not appear in 'for in' loop
+    writable: true
+})

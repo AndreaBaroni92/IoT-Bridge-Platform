@@ -53,7 +53,8 @@ in seguito se i dati provengono dal protocollo mqtt digitare il seguente comando
 ```
 node .\main.js save -p "mqtt" -h "192.168.1.2"  -t "temperature"  -n 1883 -c file.json
 ```  
-che salverà i dati all'interno del database specificato dal file json
+che salverà i dati all'interno del database specificato dal file json.  
+Nel caso in cui i dati provengano dal protocollo mqtt è possibile specificare come topic anche il carattere `#` che indica di rimanere in ascolto su tutti i topic pubblicati verso un broker. Per ogni topic oltre ai tag definiti nel file json precedentemente descritto verrà aggiunto un tag della forma `topic : nome topic`.
 ### conversione
 Per convertire dati provenienti da un flusso mqtt e trasformarli in un flusso dati in uscita per il protocollo http è necessario digitare il seguente comando con i parametri opportunamente settati:
 ```
@@ -68,7 +69,7 @@ Per informazioni sulle opzioni è possibile digitare:
 ```
 node .\main.js translate --help
 ``` 
-## Settaggio nel database Influx 2.0  
+## Settaggio del database Influx 2.0  
 Per la creazione del bucket, e l'impostazione dei check, degli alert e degli avvisi con i relativi endpoint è possibile utilizzare l'interfaccia grafica fornita con influx 2.0. Il file `env.js` è necessario per specificare **l'url** ,**il token** e **l'organizzazione** del database.
 Alternativamente è possibile utilizzare alcuni file presenti all'interno della cartella **dati**, in particolare:  
 - `createBucket.js` crea un bucket su influx, è possibile impostare il nome e la politica di retention,  

@@ -4,7 +4,7 @@ const { NotificationEndpointsAPI, OrgsAPI } = require('@influxdata/influxdb-clie
 const { url, org, token } = require('./env')
 const influxDB = new InfluxDB({ url, token })
 
-const URLENDPOINT = 'http://192.168.1.6:3006/prova'
+const URLENDPOINT = 'http://192.168.1.8:3006/prova'
 
 function controlla(checPresente, chekDaInserire) {
 
@@ -13,7 +13,7 @@ function controlla(checPresente, chekDaInserire) {
     }
 }
 
-recreateEndpoint("endpointTel")
+recreateEndpoint("endpointPost")
 
 async function createEndpoint(api, endP, orgID2) {
 

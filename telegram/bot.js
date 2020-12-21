@@ -1,7 +1,5 @@
-// Il seguente bot si occupa di visualizzare su un bot telegream i risultati del sensore dht11 tramite i 
-// comandi temperature e umidity
 const Telegraf = require('telegraf')
-const TOKEN = '' //token del bot telegram
+const TOKEN = ''
 const bot = new Telegraf(TOKEN)
 const read = require('./../display.js')
 const util = require('./../util.js')

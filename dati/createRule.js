@@ -114,4 +114,4 @@ async function recreateRule(regolaDaInserire, endpointName) {
 
 }
 
-recreateRule("Ruledht11", "endpointTel")
+recreateRule("Ruledht11", "endpointPost")

@@ -3,7 +3,6 @@ var coap = require('coap')
 
 server.on('request', function (req, res) {
 
-  console.log("Url richiesta " + req.url)
   res.end(((Math.random() * 3) + 21).toFixed(2).toString(), "UTF-8")
 
 })

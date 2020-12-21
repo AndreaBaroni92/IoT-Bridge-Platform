@@ -1,4 +1,3 @@
-//Autore Prof. Marco di felice url : http://www.cs.unibo.it/~difelice/iot/script/sketch_demo_mqtt.ino
 #include "WiFi.h"
 #include <PubSubClient.h>
 #include <DHT.h>
@@ -7,92 +6,83 @@
 #define DEFAULT_SENSE_FREQUENCY 2000
 
 DHT dht(PIN_DHT, DHT11);
-PubSubClient clientMQTT;
+PubSubClient clientMQTT; 
 WiFiClient clientWiFi;
-const char *IP_MQTT_SERVER = "";
-const char *TOPIC_1 = "sensor/temperature";
-const char *TOPIC_2 = "sensor/humidity";
+const char* IP_MQTT_SERVER="";
+const char* TOPIC_1 = "sensor/temperature";
+const char* TOPIC_2 = "sensor/humidity";
 float tempValue;
-char tempString[6];
+char tempString[6]; 
 float humValue;
 char humString[6];
 
 boolean resultMQTT;
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
   delay(100);
   dht.begin();
   delay(100);
   connect();
   clientMQTT.setClient(clientWiFi);
-  clientMQTT.setServer(IP_MQTT_SERVER, 1883);
-  resultMQTT = false;
+  clientMQTT.setServer(IP_MQTT_SERVER,1883);
+  resultMQTT=false;
 }
 
-boolean publishData(char *payload, int topic)
-{
-
-  boolean connected = clientMQTT.connected();
-  if (!connected)
-    connected = clientMQTT.connect("nodemcu");
-  if (connected)
-  {
-    if (topic == 0)
-    {
-      bool result = clientMQTT.publish(TOPIC_1, payload);
+boolean publishData(char* payload, int topic) {
+  
+  boolean connected=clientMQTT.connected();
+  if (!connected) 
+    connected=clientMQTT.connect("nodemcu");
+  if (connected) {
+    if (topic==0) {
+      bool result=clientMQTT.publish(TOPIC_1,payload); 
+      clientMQTT.loop();
+      return result;
+    } else {
+      bool result=clientMQTT.publish(TOPIC_2,payload); 
       clientMQTT.loop();
       return result;
     }
-    else
-    {
-      bool result = clientMQTT.publish(TOPIC_2, payload);
-      clientMQTT.loop();
-      return result;
-    }
-  }
-  else
-    return (false);
+  } else return(false);  
 }
 
-void loop()
-{
+void loop() {
   Serial.print("[LOG] Read the temperature value ... ");
-  tempValue = dht.readTemperature();
+  tempValue=dht.readTemperature();
   delay(200);
-  humValue = dht.readHumidity();
+  humValue=dht.readHumidity();
   delay(200);
   Serial.println(tempValue);
-  sprintf(tempString, "%f", tempValue);
-  resultMQTT = publishData(tempString, 0);
-  if (resultMQTT)
+  sprintf(tempString,"%f", tempValue);
+  resultMQTT=publishData(tempString, 0);
+  if (resultMQTT) 
     Serial.println("[LOG] Data temp published on the MQTT server");
   else
     Serial.println("[ERROR] MQTT connection failed");
-
-  sprintf(humString, "%f", humValue);
-  resultMQTT = publishData(humString, 1);
-  if (resultMQTT)
+  
+  sprintf(humString,"%f", humValue);
+  resultMQTT=publishData(humString, 1);
+  if (resultMQTT) 
     Serial.println("[LOG] Data hum published on the MQTT server");
   else
     Serial.println("[ERROR] MQTT connection failed");
-
+  
   delay(DEFAULT_SENSE_FREQUENCY);
 }
 
-const char *SSID = "xxxxxxxxxxxxxxxxxxxxxxxx";    //fill with WiFi data
-const char *PASS = "xxxxxxxxxxxxxxxxxxxxxxxxxxx"; //fill with WiFi data
 
-void connect()
-{
+
+const char* SSID = "xxxxxxxxxxxxxxxxxxxxxxxx"; //fill with WiFi data
+const char* PASS = "xxxxxxxxxxxxxxxxxxxxxxxxxxx"; //fill with WiFi data
+
+void connect() {
   WiFi.begin(SSID, PASS);
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     Serial.println("Connection attempt");
     delay(500);
   }
-
+  
   Serial.println("WiFi connected");
   // Start the server
   Serial.println(WiFi.localIP());

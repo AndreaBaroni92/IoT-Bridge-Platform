@@ -14,13 +14,6 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
     this.field = inputField
     this.defaultTag = inputDefaultTag
     read.ReadProtocol.call(this, host, port, topic, min, max)
-    InfluxInstance.prototype = Object.create(read.ReadProtocol.prototype)
-
-    Object.defineProperty(InfluxInstance.prototype, 'constructor', {
-        value: InfluxInstance,
-        enumerable: false, // so that it does not appear in 'for in' loop
-        writable: true
-    });
 
     this.getWriteApiInflux = function () {
         const client = new InfluxDB({ url: this.url, token: this.token })
@@ -62,10 +55,14 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
 
     }
 
-    this.saveInflux = async function (mesurement, field, value) {
+    this.saveInflux = async function (mesurement, field, value, topic) {
         return new Promise(async (res, rej) => {
-            const point = new Point(mesurement)
+            let point = new Point(mesurement)
                 .floatField(field, parseFloat(value))
+            if (topic) {// se è presente un topic aggiunge un tag
+                point = point.tag("topic", topic)
+            }
+
             const writeApi = this.getWriteApiInflux()
             try {
                 let ris = await this.execSaveInflux(writeApi, point)
@@ -88,7 +85,7 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
                     m = data.message.toString();
                     try {
                         if (util.test(parseFloat(m), this.min, this.max)) { //filtra i risultati prima del salvataggio
-                            ris = await this.saveInflux(this.mesurement, this.field, m)
+                            ris = await this.saveInflux(this.mesurement, this.field, m, t)
                             console.log(ris);
                         }
                     } catch (error) {
@@ -157,5 +154,14 @@ function InfluxInstance(inputToken, inputOrg, inputBucket, inputUrl, inputMesure
     }
 
 }
+
+InfluxInstance.prototype = Object.create(read.ReadProtocol.prototype)
+
+Object.defineProperty(InfluxInstance.prototype, 'constructor', {
+    value: InfluxInstance,
+    enumerable: false, // so that it does not appear in 'for in' loop
+    writable: true
+});
+
 
 exports.InfluxInstance = InfluxInstance

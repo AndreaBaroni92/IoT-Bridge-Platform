@@ -58,30 +58,36 @@ async function createNewCheck(nuovoNomeCheck, orgID2) {
         name: nuovoNomeCheck,
         orgID: orgID2,
         query: {
-            text: 'from(bucket: "sensor")\n' +
+            text: 'from(bucket: "database")\n' +
                 '  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n' +
                 '  |> filter(fn: (r) => r["_measurement"] == "dht11")\n' +
-                '  |> filter(fn: (r) => r["_field"] == "temperature")\n' +                
+                '  |> filter(fn: (r) => r["_field"] == "value")\n' +
+                '  |> filter(fn: (r) => r["topic"] == "temperature")\n' +
                 '  |> aggregateWindow(every: 10s, fn: mean, createEmpty: false)\n' +
                 '  |> yield(name: "mean")',
             editMode: 'builder',
             name: '',
             builderConfig: {
-                buckets: ['sensor'],
+                buckets: ['database'],
                 tags: [
                     {
-                      key: '_measurement',
-                      values: [ 'dht11' ],
-                      aggregateFunctionType: 'filter'
+                        key: '_measurement',
+                        values: ['dht11'],
+                        aggregateFunctionType: 'filter'
                     },
                     {
-                      key: '_field',
-                      values: [ 'temperature' ],
-                      aggregateFunctionType: 'filter'
+                        key: '_field',
+                        values: ['value'],
+                        aggregateFunctionType: 'filter'
+                    },
+                    {
+                        key: 'topic',
+                        values: ['temperature'],
+                        aggregateFunctionType: 'filter'
                     },
                     { key: '', values: [], aggregateFunctionType: 'filter' }
-                  ],
-                functions: [ { name: 'mean' } ],
+                ],
+                functions: [{ name: 'mean' }],
                 aggregateWindow: { period: '10s', fillValues: false }
             }
 
@@ -95,7 +101,7 @@ async function createNewCheck(nuovoNomeCheck, orgID2) {
             {
                 allValues: false,
                 level: 'CRIT',
-                value: 19,
+                value: 25,
                 type: 'lesser'
             }
         ],

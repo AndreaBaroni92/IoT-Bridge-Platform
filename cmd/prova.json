@@ -1,9 +1,9 @@
 {
     "token": "",
-    "org": "",
-    "bucket" : "sensor",
+    "org": "IotClass",
+    "bucket" : "database",
     "url" : "http://localhost:8086",
     "mesurement" :"dht11",
-    "field": "temperature",
-    "defaultTag":"{\"chiave\": \"valore\"}"
+    "field": "value",
+    "defaultTag":"{\"chiave\": \"mqtt\"}"
 }

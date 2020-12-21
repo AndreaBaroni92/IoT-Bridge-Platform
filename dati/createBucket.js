@@ -49,7 +49,7 @@ async function recreateBucket(name) {
   )
 }
 
-recreateBucket('sensor')
+recreateBucket('database')
   .then(() => console.log('\nFinished SUCCESS'))
   .catch(error => {
     console.error(error)

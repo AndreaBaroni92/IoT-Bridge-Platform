@@ -22,9 +22,9 @@ async function createEndpoint(api, endP, orgID2) {
 
         let ris = await api.createNotificationEndpoint({
             body: {
-                channel: '',// inserire id del canale telegram sul quale spedire la notifica
+                channel: '',//id canale telegram
                 name: endP,
-                token: '',// inserire token bot telegram 
+                token: '',//token del bot che invia il messaggio al canale 
                 orgId: orgID2,
                 status: 'active',
                 type: 'telegram'

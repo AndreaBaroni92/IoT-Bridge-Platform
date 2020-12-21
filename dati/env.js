@@ -1,9 +1,9 @@
 /** InfluxDB v2 URL */
-const url =  'http://localhost:8086'
+const url = 'http://localhost:8086'
 /** InfluxDB authorization token */
 const token = ''
 /** Organization within InfluxDB  */
-const org =  ''
+const org = 'IotClass'
 
 module.exports = {
   url,

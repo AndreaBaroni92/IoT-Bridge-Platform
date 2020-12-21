@@ -1,8 +1,8 @@
 const express = require('express')
 const { Telegraf } = require('telegraf')
-const TOKEN = '' //token del bot telegram che si occupa di inviare la notifica sul canale 
-const IDCHANNEL = '' //id del canale telegram
-let prova = new TelegramBot(TOKEN, IDCHANNEL, "/prova", 3006)
+const TOKENBOT = ''
+const TOKENCHANNEL = ''
+let prova = new TelegramBot(TOKENBOT, TOKENCHANNEL, "/prova", 3006)
 prova.alert()
 
 function TelegramBot(token_bot, token_channel, path, port) {

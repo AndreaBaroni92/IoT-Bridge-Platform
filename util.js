@@ -30,3 +30,10 @@ exports.test = function (value, min, max) {
 
     }
 }
+
+
+exports.findTopic = function (arr, topic) {
+
+    return arr.findIndex(value => value.url === topic)
+
+}
